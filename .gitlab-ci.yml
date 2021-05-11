@@ -1,0 +1,45 @@
+image: cirrusci/flutter:stable
+
+stages:
+  - build
+  - analyze
+  - test
+
+# TODO: Identify correct path for the cache directory before adding caching back.
+# cache:
+#   paths:
+#     - /root/.pub-cache/
+
+before_script:
+  - flutter pub get
+  - flutter clean
+
+build:
+  stage: build
+  script:
+    - flutter build apk
+  tags:
+    - shared
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/
+  only:
+    - merge_requests
+
+analyze:
+  stage: analyze
+  script:
+    - flutter analyze
+  tags:
+    - shared
+  only:
+    - merge_requests
+
+unit_test:
+  stage: test
+  script:
+    - flutter test
+  tags:
+    - shared
+  only:
+    - merge_requests
